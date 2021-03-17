@@ -1,0 +1,17 @@
+﻿aprx = arcpy.mp.ArcGISProject("CURRENT"))
+aprx = arcpy.mp.ArcGISProject("CURRENT")
+map = aprs.listMaps("Map")[0]
+map = aprx.listMaps("Map")[0]
+layers = map.listLayers("gis*")
+layers
+Output = r'C:\Users\daniel.fourquet\Documents\GitHub\777-project-2\ArcGIS_Pro\OSM_Data\osm.gdb'
+for layer in layers:     arcpy.Clip_analysis(layer, 'SDE_VA_JURISDICTIONS', Output + r'\' + layer.name)
+layers[0].name
+for layer in layers:     arcpy.Clip_analysis(layer, 'SDE_VA_JURISDICTIONS', Output + '\\' + layer.name)
+layers = map.listLayers("gis*")
+len(layers)
+count = 0
+Output
+Output = 'C:\\Users\\daniel.fourquet\\Documents\\GitHub\\777-project-2\\ArcGIS_Pro\\OSM_Data\\osmPark.gdb'
+for layer in layers:     count += 1     print(f'{} - {layer.name}')     arcpy.Clip_analysis(layer, 'ParkBoundary', layer.name)
+for layer in layers:     count += 1     print(f'{count} - {layer.name}')     arcpy.Clip_analysis(layer, 'ParkBoundary', layer.name)

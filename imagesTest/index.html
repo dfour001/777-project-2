@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <div class="images"></div>
+
+</body></html>
+<style>
+    body {
+        margin: 0px;
+    }
+    
+    /* https://stackoverflow.com/questions/1373142/preloading-css-images */
+    .images::after{
+   position:absolute; width:0; height:0; overflow:hidden; z-index:-1;
+   content:url(15515829419_02cd1cdf06_o.jpg) url(4435513460_e5f51fd936_o.jpg)
+}
+    
+    .images {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        
+        background: url(15515829419_02cd1cdf06_o.jpg);
+        
+        animation: imgChange 15s infinite;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        
+        background-size: cover;
+    }
+    
+    @keyframes imgChange {
+        0%, 40%, 100% {
+            background-image: url(15515829419_02cd1cdf06_o.jpg)
+        }
+        50%, 80% {
+            background-image: url(4435513460_e5f51fd936_o.jpg)
+        }
+    }
+</style>

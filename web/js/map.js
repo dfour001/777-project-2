@@ -13,7 +13,7 @@ function start_map(apiKey) {
 
         const view = new MapView({
             map: map,
-            center: [-118.80543,34.02700],
+            center: [-79.8077,37.8989],
             zoom: 13,
             container: 'map'
         });
@@ -24,13 +24,32 @@ function start_map(apiKey) {
             "content": "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
         }
 
-        const trailheads = new FeatureLayer({
-            url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads_Styled/FeatureServer/0",
-            outFields: ["TRL_NAME","CITY_JUR","X_STREET","PARKING","ELEV_FT"],
+        const trails = new FeatureLayer({
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/2",
+            outFields: ["Name","Blaze","Mileage","Usage","Difficulty"],
             popupTemplate: popupTrailheads
         });
 
-        map.add(trailheads);
+        const cabins = new FeatureLayer({
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/1",
+            outFields: ["Cabin_No"],
+            popupTemplate: popupTrailheads
+        });
+
+        const parking = new FeatureLayer({
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/0",
+            popupTemplate: popupTrailheads
+        });
+
+        const highlight = new FeatureLayer({
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/3",
+            popupTemplate: popupTrailheads
+        });
+
+        map.add(trails);
+        map.add(cabins);
+        map.add(parking);
+        map.add(highlight);
     });
 }
 

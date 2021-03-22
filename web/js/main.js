@@ -1,5 +1,7 @@
 $(document).ready(function(){
     // Load esri js api key and launch map
+    let run = true;
+    if (run) {
     $.ajax({
         url: 'js/apiKey.json',
         success: function(r) {
@@ -7,4 +9,11 @@ $(document).ready(function(){
             start_map(key);
         },
       });
+    };
+
+    $('#menuLink').on('click', function() {
+        $('#menu').toggleClass('active');
+        $('#menuLink').toggleClass('active');
+    })
+
 });

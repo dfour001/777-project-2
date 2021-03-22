@@ -5,3 +5,10 @@ body, html, #map {
     width: 100%;
     background-color: rgb(231, 231, 231);
 }
+
+@media (min-width: 48em) {
+    #map {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+}

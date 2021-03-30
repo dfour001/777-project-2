@@ -139,6 +139,10 @@ appears on the left side of the page.
             background: rgba(75, 117, 56, 0.5);
         }
 
+        .btnActive {
+            background: rgba(94, 150, 69, 0.5);
+        }
+
     /*
     This styles the selected menu item `<li>`.
     */

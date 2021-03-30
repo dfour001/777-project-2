@@ -11,6 +11,7 @@ function start_map(apiKey) {
     ], function (esriConfig,Map, MapView, FeatureLayer, UniqueValueRenderer, Home, LayerList, Expand) {
         esriConfig.apiKey = apiKey;
 
+
         const map = new Map({
             basemap: "arcgis-topographic"
         });
@@ -29,7 +30,29 @@ function start_map(apiKey) {
         });
 
         const widgetLayerList = new LayerList({
-          view: view
+          view: view,
+          listItemCreatedFunction: function(e) {
+            let item = e.item;
+            item.title = item.title.split('GEOG 777 Project2 WFL1 - ')[1]
+            switch(item.title) {
+              case "GEOG 777 Project2 WFL1 - HighlightPark":
+                item.title = "Highlight Park";
+                break;
+              
+              case "GEOG 777 Project2 WFL1 - Trails":
+                item.title = "Trails";
+                item.visible = false;
+                break;
+
+              case "GEOG 777 Project2 WFL1 - Parking":
+                item.title = "Parking";
+                break;
+
+              case "GEOG 777 Project2 WFL1 - Cabins":
+                item.title = "Cabins";
+                item.visible = false;
+            }
+          }
         });
 
         const layerListExpand = new Expand({
@@ -162,16 +185,53 @@ function start_map(apiKey) {
         });
 
         const highlight = new FeatureLayer({
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/3",
-            popupTemplate: popupTrailheads
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/3"
         });
 
         map.add(trails);
         map.add(cabins);
         map.add(parking);
         map.add(highlight);
-        console.log(map);
-        console.log(view);
+        console.log(widgetLayerList);
+        /////////////////////////////
+        // Add map event listeners /
+        ///////////////////////////
+        function removeActive() {
+          $('.pure-menu-link').removeClass('btnActive');
+          trails.visible = false;
+          cabins.visible = false;
+          parking.visible = false;
+        }
+
+        $('#btnTrails').on('click', function() {
+          removeActive(); // Remove active button highlight
+          trails.visible = true;
+          $(this).addClass('btnActive');
+        });
+
+        $('#btnCabins').on('click', function() {
+          removeActive();
+          cabins.visible = true;
+          $(this).addClass('btnActive');
+        })
+
+        $('#btnCampsites').on('click', function() {
+          removeActive();
+          // campsites.visible = true;
+          $(this).addClass('btnActive');
+        })
+
+        $('#btnActivities').on('click', function() {
+          removeActive();
+          // activities.visible = true;
+          $(this).addClass('btnActive');
+        })
+
+        $('#btnParking').on('click', function() {
+          removeActive();
+          parking.visible = true;
+          $(this).addClass('btnActive');
+        })
     });
 }
 

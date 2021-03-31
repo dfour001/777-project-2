@@ -7,8 +7,9 @@ function start_map(apiKey) {
         "esri/renderers/UniqueValueRenderer",
         "esri/widgets/Home",
         "esri/widgets/LayerList",
-        "esri/widgets/Expand"
-    ], function (esriConfig,Map, MapView, FeatureLayer, UniqueValueRenderer, Home, LayerList, Expand) {
+        "esri/widgets/Expand",
+        "esri/widgets/Search"
+    ], function (esriConfig,Map, MapView, FeatureLayer, UniqueValueRenderer, Home, LayerList, Expand, Search) {
         esriConfig.apiKey = apiKey;
 
 
@@ -46,6 +47,7 @@ function start_map(apiKey) {
 
               case "GEOG 777 Project2 WFL1 - Parking":
                 item.title = "Parking";
+                item.visible = false;
                 break;
 
               case "GEOG 777 Project2 WFL1 - Cabins":
@@ -61,8 +63,32 @@ function start_map(apiKey) {
           content: widgetLayerList
         });
 
+        // Search bar for cabins data source source
+        // const searchSource = [{
+        //   layer: new FeatureLayer({
+        //     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/1",
+        //     outFields: ["Cabin_No"]
+        //   }),
+        //   searchFields: ["Cabin_No"],
+        //   displayField: "Cabin_No",
+        //   placeholder: "egh eh",
+        //   name: "Cabins",
+        //   exactMatch: false,
+        //   maxResults: 3,
+        //   maxSuggestions: 3,
+        //   suggestionsEneabled: true,
+        //   minSuggestCharacters: 1
+        // }];
+
+        // const widgetSearch = new Search ({
+        //   view: view,
+        //   includeDefaultSources: false,
+        //   label: 'HA HA HA!'
+        // });
+
         view.ui.add(widgetHome, 'top-right');
         view.ui.add(layerListExpand, 'top-right');
+        // view.ui.add(widgetSearch, {position: 'top-right'});
 
         /////////////////////
         // Popup Templates /
@@ -71,6 +97,10 @@ function start_map(apiKey) {
             "title": "Trailhead",
             "content": "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
         }
+        const popupCabin = {
+          "title": "Cabin {CABIN_NO}",
+          "content": "<b>Cabin Number:</b> {CABIN_NO}<br>"
+      }
 
         ///////////////
         // Renderers /
@@ -176,8 +206,23 @@ function start_map(apiKey) {
         const cabins = new FeatureLayer({
             url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/1",
             outFields: ["Cabin_No"],
-            popupTemplate: popupTrailheads
+            popupTemplate: popupCabin
         });
+
+        // Search widget for cabins
+        const widgetCabinSearch = new Search({
+          view: view,
+          sources: [{
+            layer: cabins,
+            searchFields: ['Cabin_No'],
+            suggestionTemplate: "Cabin {Cabin_No}",
+            exactMatch: false,
+            outfields: ['Cabin_No'],
+            placeholder: 'Search by Cabin Number...'
+          }],
+          includeDefaultSources: false
+        });
+        view.ui.add(widgetCabinSearch, 'bottom-right');
 
         const parking = new FeatureLayer({
             url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/0",

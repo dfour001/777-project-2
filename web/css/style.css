@@ -6,6 +6,23 @@ body, html, #map {
     background-color: rgb(231, 231, 231);
 }
 
+#trailsWidget {
+    background-color: #242424;
+    padding: 5px;;
+}
+.trails-widget {
+    margin: 10px;
+    padding: 5px;
+    text-align: center;
+    color: #adadad;
+    cursor: pointer;
+}
+
+.trails-widget-active {
+    border: 2px solid #adadad;
+}
+
+
 @media (min-width: 48em) {
     #map {
         margin-left: 250px;

@@ -26,6 +26,9 @@ function start_map(apiKey) {
 
         view.ui.move('zoom','top-right');
 
+        /////////////
+        // Widgets /
+        ///////////
         const widgetHome = new Home({
             view: view
         });
@@ -222,7 +225,6 @@ function start_map(apiKey) {
           }],
           includeDefaultSources: false
         });
-        view.ui.add(widgetCabinSearch, 'bottom-right');
 
         const parking = new FeatureLayer({
             url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/0",
@@ -250,34 +252,76 @@ function start_map(apiKey) {
 
         $('#btnTrails').on('click', function() {
           removeActive(); // Remove active button highlight
+          hideWidgets()
           trails.visible = true;
+          parking.visible = true;
+          view.ui.add('trailsWidget', 'bottom-right');
           $(this).addClass('btnActive');
         });
 
+        // Trails change symbols buttons
+        $('#trailsBlazes').on('click', function() {
+          trails.renderer = trailsBlaze;
+          $('.trails-widget').toggleClass('trails-widget-active');
+        });
+
+        $('#trailsDifficulty').on('click', function() {
+          trails.renderer = trailsDifficulty;
+          $('.trails-widget').toggleClass('trails-widget-active');
+        })
+
         $('#btnCabins').on('click', function() {
           removeActive();
+          hideWidgets()
           cabins.visible = true;
+          view.ui.add(widgetCabinSearch, 'bottom-right');
           $(this).addClass('btnActive');
         })
 
         $('#btnCampsites').on('click', function() {
           removeActive();
+          hideWidgets()
           // campsites.visible = true;
           $(this).addClass('btnActive');
         })
 
         $('#btnActivities').on('click', function() {
           removeActive();
+          hideWidgets()
           // activities.visible = true;
           $(this).addClass('btnActive');
         })
 
         $('#btnParking').on('click', function() {
           removeActive();
+          hideWidgets()
           parking.visible = true;
           $(this).addClass('btnActive');
         })
-    });
+
+        function toggleMenuActive() {
+          $('#menu').toggleClass('active');
+          $('#menuLink').toggleClass('active');
+        }
+
+        function hideWidgets() {
+          // Hides any unneeded widgets when a different layer is selected
+          // from the menu
+          view.ui.remove([widgetCabinSearch, 'trailsWidget']);
+        }
+    
+        $('#menuLink').on('click', function() {
+            toggleMenuActive();
+        });
+    
+        $('.pure-menu-item').on('click', function() {
+            toggleMenuActive();
+        });
+
+        
+
+
+      });
 }
 
 

@@ -8,8 +8,10 @@ function start_map(apiKey) {
         "esri/widgets/Home",
         "esri/widgets/LayerList",
         "esri/widgets/Expand",
-        "esri/widgets/Search"
-    ], function (esriConfig,Map, MapView, FeatureLayer, UniqueValueRenderer, Home, LayerList, Expand, Search) {
+        "esri/widgets/Search",
+        "esri/widgets/Editor",
+        "esri/widgets/Track"
+    ], function (esriConfig,Map, MapView, FeatureLayer, UniqueValueRenderer, Home, LayerList, Expand, Search, Editor, Track) {
         esriConfig.apiKey = apiKey;
 
 
@@ -56,6 +58,21 @@ function start_map(apiKey) {
               case "GEOG 777 Project2 WFL1 - Cabins":
                 item.title = "Cabins";
                 item.visible = false;
+                break;
+              
+              case "GEOG 777 Project2 WFL1 - Waterfalls":
+                item.title = "Waterfalls";
+                item.visible = false;
+                break;
+
+              case "GEOG 777 Project2 WFL1 - Campsites":
+                item.title = "Campsites";
+                item.visible = false;
+                break;
+
+              case "FourquetGEOG777Comment - Point":
+                item.title = "Comments";
+                item.visible = false;
             }
           }
         });
@@ -66,44 +83,51 @@ function start_map(apiKey) {
           content: widgetLayerList
         });
 
-        // Search bar for cabins data source source
-        // const searchSource = [{
-        //   layer: new FeatureLayer({
-        //     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/1",
-        //     outFields: ["Cabin_No"]
-        //   }),
-        //   searchFields: ["Cabin_No"],
-        //   displayField: "Cabin_No",
-        //   placeholder: "egh eh",
-        //   name: "Cabins",
-        //   exactMatch: false,
-        //   maxResults: 3,
-        //   maxSuggestions: 3,
-        //   suggestionsEneabled: true,
-        //   minSuggestCharacters: 1
-        // }];
+        const widgetEditor = new Editor({
+          view: view,
+          allowedWorkflows: ['create'],
+          label: "Comment Label"
+        });
 
-        // const widgetSearch = new Search ({
-        //   view: view,
-        //   includeDefaultSources: false,
-        //   label: 'HA HA HA!'
-        // });
+        const widgetTrack = new Track({
+          view:view
+        });
 
         view.ui.add(widgetHome, 'top-right');
+        view.ui.add(widgetTrack, 'top-right');
         view.ui.add(layerListExpand, 'top-right');
-        // view.ui.add(widgetSearch, {position: 'top-right'});
+        view.ui.add('trailsWidget', 'bottom-right');       
+
 
         /////////////////////
         // Popup Templates /
         ///////////////////
-        const popupTrailheads = {
-            "title": "Trailhead",
-            "content": "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
-        }
+
+        const popupTrails = {
+            "title": "<b>Trail Name:</b> {Name}",
+            "content": "<b>Blaze Color:</b> {Blaze}<br><b>Mileage:</b> {Mileage}<br><b>Difficulty:</b> {Difficulty}"
+        };
+        
         const popupCabin = {
           "title": "Cabin {CABIN_NO}",
-          "content": "<b>Cabin Number:</b> {CABIN_NO}<br>"
-      }
+          "content": "<b>Bedrooms:</b> {BR}<br><b>Max Capacity:</b> {MaxCapacity}<br><br><img src='https://danielfourquet.com/images/DouthatCabin.jpg'><br><hr><a class='pure-button' href='https://www.reserveamerica.com/explore/douthat-state-park/VA/140188/overview' target='_blank' style='color: black'>Check Availability</a>"
+        };
+
+        const popupCampsites = {
+          "title": "{Name}",
+          "content": "<b>Number of sites:</b> {Sites}<br><hr><a class='pure-button' href='#' style='color: black'>Check Availability</a>"
+        };
+
+        const popupWaterfall = {
+          "title": "{Name}",
+          "content": "<b>Height</b>: {Height}"
+        };
+
+        const popupComments = {
+          "title": "<b>Name:</b> {Name}",
+          "content": "<b>Comment:</b> {Comment}"
+        };
+
 
         ///////////////
         // Renderers /
@@ -114,13 +138,11 @@ function start_map(apiKey) {
             field: "Difficulty",
             defaultSymbol: { 
                 type: "simple-line",
-                style: "short-dash-dot",
                 width: 2 },
             uniqueValueInfos: [{
               value: "Easy",
               symbol: {
                 type: "simple-line",
-                style: "short-dash-dot",
                 width: 2,
                 color: "green"
               }
@@ -128,7 +150,6 @@ function start_map(apiKey) {
               value: "Moderate",
               symbol: {
                 type: "simple-line",
-                style: "short-dash-dot",
                 width: 2,
                 color: "yellow"
               }
@@ -136,7 +157,6 @@ function start_map(apiKey) {
               value: "Difficult",
               symbol: {
                 type: "simple-line",
-                style: "short-dash-dot",
                 width: 2,
                 color: "red"
               }
@@ -200,15 +220,15 @@ function start_map(apiKey) {
         //////////////////
 
         const trails = new FeatureLayer({
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/2",
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/4",
             outFields: ["Name","Blaze","Mileage","Usage","Difficulty"],
-            popupTemplate: popupTrailheads,
+            popupTemplate: popupTrails,
             renderer: trailsBlaze
         });
 
         const cabins = new FeatureLayer({
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/1",
-            outFields: ["Cabin_No"],
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/3",
+            outFields: ["Cabin_No", "BR", "MaxCapacity", "Img"],
             popupTemplate: popupCabin
         });
 
@@ -226,20 +246,37 @@ function start_map(apiKey) {
           includeDefaultSources: false
         });
 
+        const campsites = new FeatureLayer({
+          url:"https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/0",
+          outFields: ["Name","Sites"],
+          popupTemplate: popupCampsites
+        });
+
+        const waterfalls = new FeatureLayer({
+          url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/1",
+          outFields: ["Name", "Height"],
+          popupTemplate: popupWaterfall
+        });
+
         const parking = new FeatureLayer({
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/0",
-            popupTemplate: popupTrailheads
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/2",
+            outFields: ['Spaces', 'SurfaceMaterial'],
+            popupTemplate: null
         });
 
         const highlight = new FeatureLayer({
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/3"
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/GEOG_777_Project2_WFL1/FeatureServer/5"
         });
 
-        map.add(trails);
-        map.add(cabins);
-        map.add(parking);
-        map.add(highlight);
-        console.log(widgetLayerList);
+        const comments = new FeatureLayer({
+          url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/FourquetGEOG777Comment/FeatureServer/0",
+          outFields: ['Name', 'Comment'],
+          popupTemplate: popupComments
+        })
+        // Add Layers
+        map.addMany([trails, cabins, parking, highlight, campsites, waterfalls, comments]);
+        
+
         /////////////////////////////
         // Add map event listeners /
         ///////////////////////////
@@ -248,6 +285,8 @@ function start_map(apiKey) {
           trails.visible = false;
           cabins.visible = false;
           parking.visible = false;
+          campsites.visible = false;
+          waterfalls.visible = false;
         }
 
         $('#btnTrails').on('click', function() {
@@ -255,7 +294,8 @@ function start_map(apiKey) {
           hideWidgets()
           trails.visible = true;
           parking.visible = true;
-          view.ui.add('trailsWidget', 'bottom-right');
+          // view.ui.add('trailsWidget', 'bottom-right');
+          $('#trailsWidget').removeClass('trails-widget-disabled');
           $(this).addClass('btnActive');
         });
 
@@ -268,7 +308,7 @@ function start_map(apiKey) {
         $('#trailsDifficulty').on('click', function() {
           trails.renderer = trailsDifficulty;
           $('.trails-widget').toggleClass('trails-widget-active');
-        })
+        });
 
         $('#btnCabins').on('click', function() {
           removeActive();
@@ -276,28 +316,42 @@ function start_map(apiKey) {
           cabins.visible = true;
           view.ui.add(widgetCabinSearch, 'bottom-right');
           $(this).addClass('btnActive');
-        })
+        });
 
         $('#btnCampsites').on('click', function() {
           removeActive();
           hideWidgets()
-          // campsites.visible = true;
+          campsites.visible = true;
           $(this).addClass('btnActive');
-        })
+        });
 
-        $('#btnActivities').on('click', function() {
+        $('#btnWaterfalls').on('click', function() {
           removeActive();
-          hideWidgets()
-          // activities.visible = true;
+          hideWidgets();
+          waterfalls.visible = true;
           $(this).addClass('btnActive');
-        })
+        });
 
         $('#btnParking').on('click', function() {
           removeActive();
           hideWidgets()
           parking.visible = true;
           $(this).addClass('btnActive');
-        })
+          
+        });
+
+        $('#btnComment').on('click', function() {
+          removeActive();
+          hideWidgets();
+          comments.visible = true;
+          view.ui.add(widgetEditor, 'bottom-right');
+          setTimeout(function() {
+            $('.esri-editor__title').html('Add Map Comment');
+            $('.esri-editor__feature-list-name').html('Add map comment point')
+          }, 50);
+          
+          $(this).addClass('btnActive');
+        });
 
         function toggleMenuActive() {
           $('#menu').toggleClass('active');
@@ -307,7 +361,8 @@ function start_map(apiKey) {
         function hideWidgets() {
           // Hides any unneeded widgets when a different layer is selected
           // from the menu
-          view.ui.remove([widgetCabinSearch, 'trailsWidget']);
+          view.ui.remove([widgetCabinSearch, widgetEditor]);
+          $('#trailsWidget').addClass('trails-widget-disabled');
         }
     
         $('#menuLink').on('click', function() {
@@ -316,6 +371,21 @@ function start_map(apiKey) {
     
         $('.pure-menu-item').on('click', function() {
             toggleMenuActive();
+        });
+
+        // Check for opened popups in mobile and make sure they're expanded
+        view.when(function() {
+          view.popup.watch("collapsed", function(value){
+            if(value && view.popup.currentDockPosition === 'bottom-center'){
+              popup.collapsed = false;
+            }
+          });
+
+          // Editor.viewModel.watch('state', function(state) {
+          //   if (state === 'ready') {
+              
+          //   }
+          // })
         });
 
         
